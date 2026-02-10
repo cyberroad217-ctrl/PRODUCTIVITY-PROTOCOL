@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# This routing rule is required for Single Page Applications (like React Router)
+# It tells Netlify to redirect all sub-path requests back to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
