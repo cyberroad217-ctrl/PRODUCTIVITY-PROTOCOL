@@ -1,15 +1,28 @@
-
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, ChevronRight, Zap, Database, Globe, ArrowRight } from 'lucide-react';
 import { FEATURED_PRODUCT, INITIAL_PRODUCTS, STRIPE_PAYMENT_LINK } from '../constants';
 import ProductCard from '../components/ProductCard';
 
 const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/marketplace?search=${encodeURIComponent(searchQuery)}`);
+    } else {
+      navigate('/marketplace');
+    }
+  };
+
+  const executeCategorySearch = (category: string) => {
+    navigate(`/marketplace?search=${encodeURIComponent(category)}`);
+  };
 
   return (
-    <div className="pt-16">
+    <div className="pt-28 md:pt-16">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-white py-24 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -26,28 +39,28 @@ const Home: React.FC = () => {
               PDF e-books, premium templates, marketing kits, and auto-generated tools powered by multi-trillion token quantum ecosystems.
             </p>
 
-            <div className="relative max-w-xl mx-auto mb-12">
+            <form onSubmit={handleSearch} className="relative max-w-xl mx-auto mb-12">
               <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
               <input
                 type="text"
                 placeholder="Search PDF packages, e-books, prompt packs..."
-                className="block w-full pl-12 pr-4 py-5 border border-black text-lg focus:ring-0 focus:outline-none placeholder-gray-300"
+                className="block w-full pl-12 pr-4 py-5 border border-black text-lg focus:ring-0 focus:outline-none placeholder-gray-300 transition-shadow focus:shadow-xl"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <button className="absolute right-2 top-2 bottom-2 bg-black text-white px-6 font-bold hover:bg-gray-800 transition-all">
+              <button type="submit" className="absolute right-2 top-2 bottom-2 bg-black text-white px-6 font-bold hover:bg-gray-800 transition-all">
                 SEARCH
               </button>
-            </div>
+            </form>
 
             <div className="flex flex-wrap justify-center gap-4 text-xs font-bold uppercase text-gray-400">
-              <span className="hover:text-black cursor-pointer border-b border-transparent hover:border-black py-1">E-books</span>
-              <span className="hover:text-black cursor-pointer border-b border-transparent hover:border-black py-1">Templates</span>
-              <span className="hover:text-black cursor-pointer border-b border-transparent hover:border-black py-1">Marketing Kits</span>
-              <span className="hover:text-black cursor-pointer border-b border-transparent hover:border-black py-1">AI Assets</span>
-              <span className="hover:text-black cursor-pointer border-b border-transparent hover:border-black py-1">Business Kits</span>
+              <span onClick={() => executeCategorySearch('E-books')} className="hover:text-black cursor-pointer border-b border-transparent hover:border-black py-1 transition-colors">E-books</span>
+              <span onClick={() => executeCategorySearch('Templates')} className="hover:text-black cursor-pointer border-b border-transparent hover:border-black py-1 transition-colors">Templates</span>
+              <span onClick={() => executeCategorySearch('Marketing')} className="hover:text-black cursor-pointer border-b border-transparent hover:border-black py-1 transition-colors">Marketing Kits</span>
+              <span onClick={() => executeCategorySearch('AI')} className="hover:text-black cursor-pointer border-b border-transparent hover:border-black py-1 transition-colors">AI Assets</span>
+              <span onClick={() => executeCategorySearch('Business')} className="hover:text-black cursor-pointer border-b border-transparent hover:border-black py-1 transition-colors">Business Kits</span>
             </div>
           </div>
         </div>

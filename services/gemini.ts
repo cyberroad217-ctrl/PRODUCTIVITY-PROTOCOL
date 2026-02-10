@@ -1,10 +1,7 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 
 export async function generateProductDescription(productName: string) {
   try {
-    // Initialize AI instance right before API call to avoid global crashes
-    // and ensure it captures the latest env variables.
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
     const response = await ai.models.generateContent({
@@ -36,5 +33,47 @@ export async function generateAgentArticle() {
   } catch (error) {
     console.error("Gemini Error:", error);
     return "The quantum bridge is currently stabilizing. Please check back soon.";
+  }
+}
+
+// Employs AGI to literally invent new products using deep learning LLM structures
+export async function generateAGIProduct() {
+  try {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: "Invent a highly advanced digital productivity product (like software, an e-book, an AI template, or a SaaS boilerplate) to sell on an elite digital marketplace. Make it sound extremely professional, high-tech, and desirable.",
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            name: {
+              type: Type.STRING,
+              description: "The high-tech name of the product.",
+            },
+            description: {
+              type: Type.STRING,
+              description: "A short, punchy, high-conversion sales description.",
+            },
+            price: {
+              type: Type.NUMBER,
+              description: "The price of the product, between 19 and 299.",
+            },
+            category: {
+              type: Type.STRING,
+              description: "Must be one of: E-books, Templates, Marketing Kits, AI Packs, Business Kits, Software & Tools",
+            }
+          },
+          required: ["name", "description", "price", "category"],
+        },
+      },
+    });
+
+    const jsonStr = response.text?.trim() || "{}";
+    return JSON.parse(jsonStr);
+  } catch (error) {
+    console.error("AGI Generation Error:", error);
+    return null;
   }
 }
