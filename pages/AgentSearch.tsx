@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Globe, ArrowUpRight, Cpu, Activity, Zap, ExternalLink } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 
@@ -8,11 +8,36 @@ interface WebSource {
 }
 
 const AgentSearch: React.FC = () => {
-  const [query, setQuery] = useState('');
-  const [lastQuery, setLastQuery] = useState('');
+  // Initialize state from sessionStorage if available to persist data across navigation
+  const [query, setQuery] = useState(() => sessionStorage.getItem('agentSearch_query') || '');
+  const [lastQuery, setLastQuery] = useState(() => sessionStorage.getItem('agentSearch_lastQuery') || '');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState('');
-  const [sources, setSources] = useState<WebSource[]>([]);
+  const [result, setResult] = useState(() => sessionStorage.getItem('agentSearch_result') || '');
+  const [sources, setSources] = useState<WebSource[]>(() => {
+    try {
+      const saved = sessionStorage.getItem('agentSearch_sources');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Sync state changes to sessionStorage
+  useEffect(() => {
+    sessionStorage.setItem('agentSearch_query', query);
+  }, [query]);
+
+  useEffect(() => {
+    sessionStorage.setItem('agentSearch_lastQuery', lastQuery);
+  }, [lastQuery]);
+
+  useEffect(() => {
+    sessionStorage.setItem('agentSearch_result', result);
+  }, [result]);
+
+  useEffect(() => {
+    sessionStorage.setItem('agentSearch_sources', JSON.stringify(sources));
+  }, [sources]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
