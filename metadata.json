@@ -1,0 +1,8 @@
+{
+  "name": "Productivity Protocol",
+  "description": "A high-performance digital product ecosystem powered by quantum-grade AI agents, offering advanced productivity tools, e-books, and developer assets.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
