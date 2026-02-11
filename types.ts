@@ -17,6 +17,24 @@ export interface Product {
   image: string;
   rating: number;
   salesCount: number;
+  roi?: string; 
+  demandScore?: number; 
+  ebookModules?: string[]; 
+}
+
+export interface SystemHealth {
+  cpu: number;
+  memory: number;
+  latency: number;
+  status: 'OPTIMAL' | 'DEGRADED' | 'CRITICAL';
+}
+
+export interface Transaction {
+  id: string;
+  asset: string;
+  amount: number;
+  status: 'SETTLED' | 'PENDING';
+  timestamp: string;
 }
 
 export interface BlogPost {
@@ -28,13 +46,4 @@ export interface BlogPost {
   date: string;
   category: string;
   image: string;
-}
-
-export interface ConsoleStats {
-  languageCorpus: string;
-  vectorIndex: string;
-  storageTiers: number;
-  activeLayers: number;
-  contextWindow: string;
-  routingMode: string;
 }

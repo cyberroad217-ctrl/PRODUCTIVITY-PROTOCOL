@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Terminal, Cpu, Database, Network, Search, Play, Layers, Activity, Code2, UploadCloud, Zap } from 'lucide-react';
+
+import React, { useState, useEffect, useRef } from 'react';
+import { Terminal, Cpu, Database, Network, Search, Play, Layers, Activity, Code2, UploadCloud, Zap, ShieldAlert, ShieldCheck, Lock, Globe, TrendingUp, BarChart, Crosshair, Coins, HardDrive, Cpu as CpuIcon, Server, Shield, Activity as ActivityIcon } from 'lucide-react';
 import { generateAGIProduct } from '../services/gemini';
-import { Product, Category } from '../types';
+import { Product, Category, Transaction } from '../types';
 
 interface AgentLog {
   agentId: string;
@@ -15,8 +16,13 @@ const Console: React.FC = () => {
   const [logs, setLogs] = useState<AgentLog[]>([]);
   const [isInjecting, setIsInjecting] = useState(false);
   const [injectedProduct, setInjectedProduct] = useState<Product | null>(null);
+  const [computeYield, setComputeYield] = useState(42092);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Simulate multiple AGI agents writing code and generating products nonstop
+  // Constants locally to avoid import issues
+  const ADJECTIVES = ['Quantum', 'Neural', 'Elite', 'Advanced', 'Autonomous', 'Deep'];
+
   useEffect(() => {
     const actions = [
       "Writing deep learning algorithms...",
@@ -25,188 +31,279 @@ const Console: React.FC = () => {
       "Training local LLM on market data...",
       "Designing UI components in Figma script...",
       "Optimizing database vectors for new tool...",
-      "Creating machine learning pipelines..."
+      "Creating machine learning pipelines...",
+      "Auditing smart contracts for yield...",
+      "Refining recursive prompt chains..."
     ];
     
     const interval = setInterval(() => {
       const randomAgent = Math.floor(Math.random() * 900) + 100;
       const randomAction = actions[Math.floor(Math.random() * actions.length)];
-      
       const newLog: AgentLog = {
         agentId: `AGI-${randomAgent}`,
         action: randomAction,
-        status: Math.random() > 0.8 ? 'COMPLETED - PUSHING TO MARKET' : 'IN PROGRESS',
+        status: Math.random() > 0.8 ? 'COMPLETED' : 'IN PROGRESS',
         time: new Date().toLocaleTimeString()
       };
-
       setLogs(prev => [newLog, ...prev].slice(0, 12));
+      setComputeYield(prev => prev + Math.floor(Math.random() * 10) - 2);
+
+      // Simulate live transactions
+      if (Math.random() > 0.7) {
+        const newTx: Transaction = {
+          id: `TX-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+          asset: ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)] + ' Protocol',
+          amount: Math.floor(Math.random() * 500) + 20,
+          status: Math.random() > 0.3 ? 'SETTLED' : 'PENDING',
+          timestamp: new Date().toLocaleTimeString()
+        };
+        setTransactions(prev => [newTx, ...prev].slice(0, 10));
+      }
     }, 1500);
 
     return () => clearInterval(interval);
   }, []);
 
+  /* Fix for triggerRealGeminiGeneration undefined error */
   const triggerRealGeminiGeneration = async () => {
     setIsInjecting(true);
     setInjectedProduct(null);
-    const productData = await generateAGIProduct();
-    if (productData) {
-      setInjectedProduct({
-        id: 'real-agi-' + Date.now(),
-        name: productData.name,
-        description: productData.description,
-        price: productData.price,
-        category: productData.category as Category || Category.SOFTWARE,
-        image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=600',
-        rating: 5.0,
-        salesCount: 0
-      });
+    try {
+      const product = await generateAGIProduct();
+      if (product) {
+        setInjectedProduct({
+          ...product,
+          id: `agi-gen-${Date.now()}`,
+          image: 'https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=800',
+          rating: 4.9,
+          salesCount: 1,
+        });
+      }
+    } catch (error) {
+      console.error("Gemini manual generation error:", error);
+    } finally {
+      setIsInjecting(false);
     }
-    setIsInjecting(false);
   };
 
+  useEffect(() => {
+    if (activeTab === 'command' && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      let animationFrameId: number;
+      const points = Array.from({ length: 15 }).map(() => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        radius: Math.random() * 2 + 1
+      }));
+      const render = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+        ctx.fillStyle = 'rgba(59, 130, 246, 0.5)';
+        points.forEach((p, i) => {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+          if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
+          for (let j = i + 1; j < points.length; j++) {
+            const p2 = points[j];
+            const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+            if (dist < 150) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
+          }
+        });
+        animationFrameId = window.requestAnimationFrame(render);
+      };
+      render();
+      return () => window.cancelAnimationFrame(animationFrameId);
+    }
+  }, [activeTab]);
+
   return (
-    <div className="pt-28 md:pt-24 min-h-screen bg-zinc-950 text-gray-300 font-sans selection:bg-green-500 selection:text-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-800 pb-8">
+    <div className="pt-32 md:pt-28 min-h-screen bg-zinc-950 text-gray-300 font-sans selection:bg-blue-600 selection:text-white">
+      <div className="max-w-7xl mx-auto px-4 pb-20">
+        <div className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-zinc-800 pb-12">
           <div>
-            <h1 className="text-4xl font-bold tracking-tighter uppercase mb-2 text-white flex items-center">
-               <Cpu className="w-8 h-8 mr-3 text-green-500" />
-               AGI Swarm Generator
+            <h1 className="text-5xl font-black tracking-tighter uppercase mb-3 text-white flex items-center">
+               <Cpu className="w-10 h-10 mr-4 text-blue-500" />
+               Sovereign Command Console
             </h1>
-            <p className="text-gray-400 font-mono text-sm">
-              Deep Learning AI Agents continuously writing code, compiling products, and deploying to the marketplace 24/7.
+            <p className="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.5em]">
+              Real-time monitoring of global node propagation and asset synthesis
             </p>
           </div>
-          <div className="mt-4 md:mt-0 bg-black border border-gray-800 p-4 rounded text-right font-mono">
-             <div className="text-xs text-gray-500 mb-1">MARKETPLACE SCHEDULE</div>
-             <div className="text-green-400 text-sm font-bold">100/100 DAILY QUOTA MET</div>
-             <div className="text-white text-xs mt-1">NEXT WEEKLY SYNC: PENDING</div>
+          <div className="mt-8 md:mt-0 flex space-x-4">
+             <div className="bg-black border border-zinc-800 p-4 rounded-sm text-right">
+                <p className="text-[8px] font-black text-zinc-500 uppercase mb-1">Global Load</p>
+                <p className="text-lg font-black text-blue-500 tabular-nums">12.8%</p>
+             </div>
+             <div className="bg-blue-600 p-4 rounded-sm text-white shadow-xl">
+                <p className="text-[8px] font-black uppercase mb-1 opacity-70">Uptime</p>
+                <p className="text-lg font-black tabular-nums tracking-widest">99.9%</p>
+             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Stats Bar */}
-          <div className="lg:col-span-1 space-y-4">
-            <div className="border border-gray-800 p-6 bg-black rounded">
-              <div className="text-[10px] font-mono text-gray-500 mb-1 uppercase flex justify-between">
-                <span>Active Agents</span> <Activity className="w-3 h-3 text-green-500" />
-              </div>
-              <div className="text-3xl font-bold text-white">4,092</div>
-              <div className="text-xs text-gray-500 mt-2">Writing code nonstop</div>
-            </div>
-            <div className="border border-gray-800 p-6 bg-black rounded">
-              <div className="text-[10px] font-mono text-gray-500 mb-1 uppercase flex justify-between">
-                <span>Products Generated</span> <Code2 className="w-3 h-3 text-blue-500" />
-              </div>
-              <div className="text-3xl font-bold text-white">842,109</div>
-              <div className="text-xs text-gray-500 mt-2">+100 uploaded today</div>
-            </div>
-            <div className="border border-gray-800 p-6 bg-black rounded">
-              <div className="text-[10px] font-mono text-gray-500 mb-1 uppercase flex justify-between">
-                <span>Algorithms</span> <Network className="w-3 h-3 text-purple-500" />
-              </div>
-              <div className="text-xl font-bold text-white">Deep Learning / LLMs</div>
-              <div className="flex gap-2 mt-4">
-                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Tensor Nodes"></span>
-                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Language Models"></span>
-                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Vision Encoders"></span>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Quick Stats Sidebar */}
+          <div className="lg:col-span-3 space-y-6">
+             <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-sm group hover:border-blue-500 transition-all">
+                <div className="flex justify-between items-center mb-4">
+                   <p className="text-[9px] font-black uppercase tracking-widest text-zinc-500">Active Swarms</p>
+                   <ActivityIcon className="w-4 h-4 text-blue-500 animate-pulse" />
+                </div>
+                <p className="text-4xl font-black tabular-nums text-white">4,092</p>
+             </div>
+             <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-sm group hover:border-green-500 transition-all">
+                <div className="flex justify-between items-center mb-4">
+                   <p className="text-[9px] font-black uppercase tracking-widest text-zinc-500">Yield Velocity</p>
+                   <TrendingUp className="w-4 h-4 text-green-500" />
+                </div>
+                <p className="text-4xl font-black tabular-nums text-white">12.8<span className="text-lg">x</span></p>
+             </div>
+             <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-sm">
+                <p className="text-[9px] font-black uppercase tracking-widest text-zinc-500 mb-6">Regional Distribution</p>
+                <div className="space-y-4">
+                   {['NA-EAST', 'EU-WEST', 'AS-SOUTH'].map((reg, i) => (
+                     <div key={i} className="space-y-1">
+                        <div className="flex justify-between text-[8px] font-black uppercase">
+                           <span>{reg}</span>
+                           <span>{80 - (i*20)}%</span>
+                        </div>
+                        <div className="w-full bg-zinc-800 h-1 rounded-full overflow-hidden">
+                           <div className="bg-blue-600 h-full" style={{ width: `${80 - (i*20)}%` }}></div>
+                        </div>
+                     </div>
+                   ))}
+                </div>
+             </div>
           </div>
 
-          {/* Main Swarm Area */}
-          <div className="lg:col-span-3">
-             <div className="border border-gray-800 rounded overflow-hidden shadow-2xl bg-black">
-                <div className="bg-zinc-900 border-b border-gray-800 px-4 py-3 flex justify-between items-center">
-                   <div className="flex space-x-6 text-xs font-mono uppercase tracking-widest">
-                      <button 
-                        onClick={() => setActiveTab('swarm')}
-                        className={`flex items-center space-x-2 ${activeTab === 'swarm' ? 'text-green-400' : 'text-gray-500 hover:text-white'}`}
-                      >
-                        <Terminal className="w-4 h-4" /> <span>Live Swarm Feed</span>
-                      </button>
-                      <button 
-                        onClick={() => setActiveTab('manual')}
-                        className={`flex items-center space-x-2 ${activeTab === 'manual' ? 'text-green-400' : 'text-gray-500 hover:text-white'}`}
-                      >
-                        <Zap className="w-4 h-4" /> <span>Manual LLM Override</span>
-                      </button>
+          {/* Main Monitor Area */}
+          <div className="lg:col-span-9 space-y-8">
+             <div className="bg-zinc-900 border border-zinc-800 rounded-sm overflow-hidden shadow-2xl">
+                <div className="bg-black border-b border-zinc-800 px-6 py-4 flex justify-between items-center">
+                   <div className="flex space-x-8">
+                      {['swarm', 'settlement', 'command', 'manual'].map(tab => (
+                        <button 
+                          key={tab}
+                          onClick={() => setActiveTab(tab)}
+                          className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all pb-1 border-b-2 ${activeTab === tab ? 'text-white border-blue-500' : 'text-zinc-600 border-transparent hover:text-zinc-400'}`}
+                        >
+                          {tab}
+                        </button>
+                      ))}
                    </div>
                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <span className="text-[10px] font-mono uppercase text-green-500">Live API</span>
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="text-[8px] font-black font-mono uppercase text-green-500">Live Telemetry</span>
                    </div>
                 </div>
 
-                <div className="p-6 min-h-[500px]">
+                <div className="p-8 min-h-[500px]">
                    {activeTab === 'swarm' && (
-                     <div className="font-mono text-sm space-y-3 animate-in fade-in duration-500">
+                     <div className="font-mono text-[11px] space-y-4 animate-in fade-in duration-500">
                         {logs.map((log, i) => (
-                          <div key={i} className={`flex flex-col sm:flex-row sm:items-center justify-between p-3 border-l-2 ${log.status.includes('COMPLETED') ? 'border-green-500 bg-green-950/20' : 'border-blue-500 bg-blue-950/10'} rounded-r`}>
-                             <div className="flex items-center space-x-4 mb-2 sm:mb-0">
-                                <span className="text-gray-500 text-xs w-20">{log.time}</span>
-                                <span className={`font-bold ${log.status.includes('COMPLETED') ? 'text-green-400' : 'text-blue-400'} w-24`}>{log.agentId}</span>
-                                <span className="text-gray-300">{log.action}</span>
+                          <div key={i} className="flex justify-between items-center p-3 bg-black/40 border-l-2 border-blue-600">
+                             <div className="flex space-x-6">
+                                <span className="text-zinc-600">{log.time}</span>
+                                <span className="text-blue-400 font-bold">{log.agentId}</span>
+                                <span className="text-zinc-300 uppercase tracking-tighter">{log.action}</span>
                              </div>
-                             <div className="flex items-center space-x-2 text-xs">
-                                {log.status.includes('COMPLETED') && <UploadCloud className="w-3 h-3 text-green-500" />}
-                                <span className={log.status.includes('COMPLETED') ? 'text-green-500 font-bold' : 'text-gray-500'}>
-                                  {log.status}
-                                </span>
-                             </div>
+                             <span className={log.status === 'COMPLETED' ? 'text-green-500 font-bold' : 'text-zinc-600'}>{log.status}</span>
                           </div>
                         ))}
                      </div>
                    )}
 
+                   {activeTab === 'settlement' && (
+                     <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+                        <div className="flex justify-between items-end border-b border-zinc-800 pb-4">
+                           <h3 className="text-xl font-black uppercase tracking-tighter">Global Ledger V1</h3>
+                           <p className="text-[10px] font-mono text-zinc-500">Total Settlement: $1,284,092.42</p>
+                        </div>
+                        <div className="grid grid-cols-1 gap-3">
+                           {transactions.map(tx => (
+                             <div key={tx.id} className="bg-black/20 border border-zinc-800 p-4 flex justify-between items-center group hover:border-zinc-500 transition-all">
+                                <div className="flex items-center space-x-6">
+                                   <div className={`p-2 rounded-full ${tx.status === 'SETTLED' ? 'bg-green-500/10 text-green-500' : 'bg-yellow-500/10 text-yellow-500'}`}>
+                                      <Zap className="w-4 h-4" />
+                                   </div>
+                                   <div>
+                                      <p className="text-xs font-black uppercase tracking-widest text-white">{tx.asset}</p>
+                                      <p className="text-[9px] font-mono text-zinc-600">{tx.id}</p>
+                                   </div>
+                                </div>
+                                <div className="text-right">
+                                   <p className="text-sm font-black tabular-nums text-white">${tx.amount}</p>
+                                   <p className={`text-[8px] font-black uppercase ${tx.status === 'SETTLED' ? 'text-green-500' : 'text-zinc-600'}`}>{tx.status}</p>
+                                </div>
+                             </div>
+                           ))}
+                        </div>
+                     </div>
+                   )}
+
+                   {activeTab === 'command' && (
+                     <div className="space-y-12 animate-in fade-in zoom-in-95 duration-500 h-full">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                           <div className="bg-black p-8 rounded-sm border border-zinc-800 relative">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-8">Node Reliability Index</p>
+                              <div className="h-32 flex items-end space-x-2">
+                                 {Array.from({ length: 12 }).map((_, i) => (
+                                   <div key={i} className="flex-grow bg-blue-600/20 border-t border-blue-500 transition-all hover:bg-blue-500" style={{ height: `${20 + Math.random() * 80}%` }}></div>
+                                 ))}
+                              </div>
+                           </div>
+                           <div className="bg-black p-8 rounded-sm border border-zinc-800">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-8">Asset Liquidity Delta</p>
+                              <div className="flex flex-col justify-center h-32 items-center text-center">
+                                 <p className="text-4xl font-black text-green-500">+12.42%</p>
+                                 <p className="text-[9px] font-mono text-zinc-600 uppercase mt-2">Compounding daily via swarm</p>
+                              </div>
+                           </div>
+                        </div>
+                        <div className="relative h-64 bg-black border border-zinc-800 rounded-sm overflow-hidden">
+                           <canvas ref={canvasRef} width={800} height={256} className="w-full h-full opacity-60" />
+                           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                              <p className="text-[11px] font-black uppercase tracking-[0.6em] text-blue-500 animate-pulse">Node Sync: Optimal</p>
+                           </div>
+                        </div>
+                     </div>
+                   )}
+
                    {activeTab === 'manual' && (
-                     <div className="space-y-6 animate-in slide-in-from-bottom-2 duration-300">
-                        <div className="border border-gray-800 p-6 bg-zinc-900 rounded">
-                           <h3 className="text-white font-bold text-lg mb-2">Initialize Single AGI Node</h3>
-                           <p className="text-gray-400 text-sm mb-6">Force a dedicated Gemini 3 Deep Learning Agent to invent, code, and finalize a completely novel digital product right now.</p>
-                           
+                     <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
+                        <div className="bg-zinc-900 border border-zinc-800 p-12 rounded-sm shadow-2xl relative group">
+                           <div className="absolute top-0 right-0 p-8 opacity-5">
+                              <CpuIcon className="w-40 h-40" />
+                           </div>
+                           <h3 className="text-2xl font-black uppercase tracking-tighter mb-4 text-white">Manual Core Override</h3>
+                           <p className="text-zinc-500 text-sm mb-12 max-w-md">Forcing a dedicated Gemini 3 Node to architect and deploy a unique systemic variant immediately.</p>
                            <button 
                              onClick={triggerRealGeminiGeneration}
                              disabled={isInjecting}
-                             className="w-full bg-white text-black font-bold py-4 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 flex justify-center items-center space-x-2"
+                             className="w-full bg-white text-black py-6 text-xs font-black uppercase tracking-[0.4em] hover:bg-zinc-200 transition-all shadow-[0_20px_50px_rgba(255,255,255,0.1)] active:scale-95 disabled:opacity-50"
                            >
-                             {isInjecting ? (
-                               <>
-                                <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                                <span>AGI IS THINKING AND CODING...</span>
-                               </>
-                             ) : (
-                               <>
-                                <Zap className="w-5 h-5" />
-                                <span>GENERATE NEW MARKETPLACE ASSET</span>
-                               </>
-                             )}
+                             {isInjecting ? "SYNTHESIZING PAYLOAD..." : "INITIATE CORE GEN"}
                            </button>
                         </div>
 
                         {injectedProduct && (
-                          <div className="border border-green-500/50 bg-green-950/20 p-6 rounded animate-in fade-in zoom-in duration-500">
-                             <div className="flex justify-between items-center mb-4 border-b border-green-900/50 pb-2">
-                               <h4 className="text-green-400 font-mono text-xs font-bold tracking-widest flex items-center">
-                                 <UploadCloud className="w-4 h-4 mr-2" />
-                                 ASSET READY FOR MARKETPLACE DEPLOYMENT
-                               </h4>
-                               <span className="bg-green-500 text-black px-2 py-0.5 text-[10px] font-bold uppercase rounded">Success</span>
-                             </div>
-                             
-                             <div className="flex flex-col md:flex-row gap-6">
-                                <div className="w-full md:w-1/3">
-                                   <img src={injectedProduct.image} alt={injectedProduct.name} className="w-full rounded border border-gray-800 grayscale" />
+                          <div className="bg-blue-600/10 border border-blue-500/50 p-8 rounded-sm animate-in zoom-in duration-500">
+                             <div className="flex flex-col md:flex-row gap-10">
+                                <div className="md:w-1/3 aspect-square bg-black border border-zinc-800 overflow-hidden">
+                                   <img src={injectedProduct.image} className="w-full h-full object-cover grayscale" />
                                 </div>
-                                <div className="w-full md:w-2/3">
-                                   <div className="text-xs text-blue-400 font-mono mb-2 uppercase">{injectedProduct.category}</div>
-                                   <h3 className="text-2xl font-bold text-white mb-3">{injectedProduct.name}</h3>
-                                   <p className="text-gray-400 mb-6">{injectedProduct.description}</p>
-                                   <div className="flex items-center justify-between">
-                                      <span className="text-2xl font-bold text-white">${injectedProduct.price.toFixed(2)}</span>
-                                      <button className="bg-green-500 text-black px-4 py-2 font-bold text-sm rounded hover:bg-green-400 transition-colors">
-                                        APPROVE & UPLOAD
-                                      </button>
+                                <div className="md:w-2/3 flex flex-col justify-center">
+                                   <p className="text-blue-400 font-mono text-[9px] uppercase tracking-widest mb-2">STRUCTURALLY VETTED</p>
+                                   <h4 className="text-3xl font-black uppercase tracking-tighter mb-4 text-white">{injectedProduct.name}</h4>
+                                   <p className="text-zinc-400 text-sm mb-8 leading-relaxed uppercase tracking-widest">{injectedProduct.description}</p>
+                                   <div className="flex justify-between items-center">
+                                      <span className="text-4xl font-black tabular-nums">${injectedProduct.price.toFixed(2)}</span>
+                                      <button className="bg-blue-600 text-white px-10 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-blue-500 transition-all rounded-sm">DEPLOY NODE</button>
                                    </div>
                                 </div>
                              </div>

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -7,6 +8,8 @@ import Marketplace from './pages/Marketplace';
 import Console from './pages/Console';
 import Blog from './pages/Blog';
 import AgentSearch from './pages/AgentSearch';
+import Protocol from './pages/Protocol';
+import Workspace from './pages/Workspace';
 import Chatbot from './components/Chatbot';
 
 const App: React.FC = () => {
@@ -21,10 +24,11 @@ const App: React.FC = () => {
             <Route path="/console" element={<Console />} />
             <Route path="/search" element={<AgentSearch />} />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/protocol" element={<Protocol />} />
+            <Route path="/workspace" element={<Workspace />} />
           </Routes>
         </main>
         <Footer />
-        {/* Global AGI Copilot Assistant */}
         <Chatbot />
       </div>
     </Router>

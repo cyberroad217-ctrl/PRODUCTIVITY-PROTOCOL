@@ -1,8 +1,10 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { FUTURE_YEAR } from "../constants";
 
 export async function generateProductDescription(productName: string) {
   try {
+    /* Guideline: Corrected GoogleGenAI initialization */
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
     const response = await ai.models.generateContent({
@@ -42,7 +44,7 @@ export async function generateAGIProduct() {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `Invent a highly advanced digital productivity product for the ${FUTURE_YEAR} market (like software, an e-book, an AI template, or a SaaS boilerplate) to sell on an elite digital marketplace. Make it sound extremely professional, high-tech, and desirable.`,
+      contents: `Invent a highly advanced digital productivity product for the ${FUTURE_YEAR} market (like software, an e-book, an AI template, or a SaaS boilerplate) to sell on an elite digital marketplace. Make it sound extremely professional, high-tech, and desirable. Include an ROI estimation (e.g. 15x ROI) and a market demand score (1-100).`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -63,9 +65,17 @@ export async function generateAGIProduct() {
             category: {
               type: Type.STRING,
               description: "Must be one of: E-books, Templates, Marketing Kits, AI Packs, Business Kits, Software & Tools",
+            },
+            roi: {
+              type: Type.STRING,
+              description: "Estimated ROI, e.g. '12x potential'",
+            },
+            demandScore: {
+              type: Type.NUMBER,
+              description: "A value from 0 to 100 representing market desirability",
             }
           },
-          required: ["name", "description", "price", "category"],
+          required: ["name", "description", "price", "category", "roi", "demandScore"],
         },
       },
     });

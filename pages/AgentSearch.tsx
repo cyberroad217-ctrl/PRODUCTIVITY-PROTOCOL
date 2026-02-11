@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Search, Globe, ArrowUpRight, Cpu, Activity, Zap, ExternalLink } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
@@ -49,7 +50,8 @@ const AgentSearch: React.FC = () => {
     setLastQuery(query);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+      /* Corrected GoogleGenAI initialization to use process.env.API_KEY directly as per SDK guidelines */
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',

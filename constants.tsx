@@ -1,3 +1,4 @@
+
 import { Product, Category, BlogPost } from './types';
 
 export const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/test_4gM28r0k5dxs5JB6lq93y00';
@@ -35,7 +36,23 @@ export const FEATURED_PRODUCT: Product = {
   category: Category.EBOOKS,
   image: 'https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&q=80&w=800',
   rating: 4.9,
-  salesCount: 12500
+  salesCount: 12500,
+  roi: "45x potential",
+  demandScore: 98,
+  ebookModules: [
+    "Module 01: The Recursive Founder Mindset",
+    "Module 02: Architecting Infinite Context Loops",
+    "Module 03: Multi-Agent Swarm Orchestration",
+    "Module 04: Zero-Latency Decision Frameworks",
+    "Module 05: Sovereign Financial Infrastructure",
+    "Module 06: Building Technical Moats in AGI Era",
+    "Module 07: Global Settlement and Web3 Scaling",
+    "Module 08: Deep Learning Operations (DL-Ops)",
+    "Module 09: Hyper-SaaS Growth Algorithms",
+    "Module 10: Security Hardening for Assets",
+    "Module 11: Venture Studio Operational Manual",
+    "Module 12: The Planet-Scale Exit Strategy"
+  ]
 };
 
 export const INITIAL_PRODUCTS: Product[] = [
@@ -47,7 +64,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     category: Category.SOFTWARE,
     image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=600',
     rating: 5.0,
-    salesCount: 420
+    salesCount: 420,
+    roi: "12x ROI",
+    demandScore: 92
   },
   {
     id: 'p2',
@@ -57,7 +76,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     category: Category.AI_PACKS,
     image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=600',
     rating: 4.8,
-    salesCount: 3100
+    salesCount: 3100,
+    roi: "5x Velocity",
+    demandScore: 85
   }
 ];
 
