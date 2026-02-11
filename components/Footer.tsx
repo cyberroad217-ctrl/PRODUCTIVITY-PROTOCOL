@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { EXTERNAL_RESOURCES } from '../constants';
 
@@ -39,7 +38,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
         <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400">
-          <p>© 2025 Productivity Protocol. All rights reserved. Powered by Trillions of Quantum Agents.</p>
+          <p>© 2025 <a href="https://productivityprotocol.netlify.app" className="hover:text-gray-800 transition-colors underline decoration-gray-300 hover:decoration-gray-800">Productivity Protocol</a>. All rights reserved. Powered by Trillions of Quantum Agents.</p>
           <div className="mt-4 md:mt-0 space-x-4">
             <span>DNA Server: SECURE</span>
             <span>Quantum Storage: ONLINE</span>
