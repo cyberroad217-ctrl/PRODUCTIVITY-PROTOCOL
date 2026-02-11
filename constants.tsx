@@ -2,6 +2,9 @@ import { Product, Category, BlogPost } from './types';
 
 export const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/test_4gM28r0k5dxs5JB6lq93y00';
 
+export const CURRENT_YEAR = new Date().getFullYear();
+export const FUTURE_YEAR = CURRENT_YEAR + 1;
+
 export const ADJECTIVES = ['Quantum', 'Neural', 'Elite', 'Advanced', 'Autonomous', 'Deep', 'Solopreneur', 'SaaS', 'Agentic', 'Hyper', 'Cognitive', 'Dynamic', 'Infinite', 'Synthetic', 'Apex', 'Prime', 'Algorithmic', 'Machine', 'Vector', 'Tensor', 'Limitless'];
 export const NOUNS = ['System', 'Protocol', 'Framework', 'Toolkit', 'Matrix', 'Engine', 'Vault', 'Boilerplate', 'Stack', 'Library', 'OS', 'Playbook', 'Core', 'Network', 'Grid', 'Module', 'Cluster', 'Swarm', 'Algorithm', 'Generator'];
 
@@ -38,8 +41,8 @@ export const FEATURED_PRODUCT: Product = {
 export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p1',
-    name: 'Next.js + AI Boilerplate 2025',
-    description: 'The ultimate starting point for high-demand SaaS products.',
+    name: `Next.js + AI Boilerplate ${FUTURE_YEAR}`,
+    description: `The ultimate starting point for high-demand SaaS products in ${FUTURE_YEAR}.`,
     price: 149.0,
     category: Category.SOFTWARE,
     image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=600',
@@ -48,8 +51,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'p2',
-    name: 'The Solopreneur AI Stack',
-    description: '500+ Midjourney Prompts & Automation Workflows.',
+    name: `The Solopreneur AI Stack ${FUTURE_YEAR}`,
+    description: `500+ Midjourney Prompts & Automation Workflows for the ${FUTURE_YEAR} market.`,
     price: 49.0,
     category: Category.AI_PACKS,
     image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=600',
@@ -61,11 +64,11 @@ export const INITIAL_PRODUCTS: Product[] = [
 export const BLOG_POSTS: BlogPost[] = [
   {
     id: 'b1',
-    title: 'The Rise of Trillion-Token Context Windows',
-    excerpt: 'How quantum LLMs are reshaping software architecture and long-form reasoning.',
-    content: 'The era of narrow context windows is over. AGI swarms are now utilizing massive, multi-trillion token context buffers to ingest entire codebases, historical corporate data, and real-time market feeds simultaneously. This paradigm shift means AI agents no longer "forget" midway through a task. Instead, they maintain persistent, deep-learning memory states across weeks of continuous execution. Organizations deploying these models are seeing a 10,000% increase in autonomous output. We are moving from prompted assistance to fully autonomous, context-aware digital workers.',
+    title: `The Rise of Trillion-Token Context Windows in ${FUTURE_YEAR}`,
+    excerpt: `How quantum LLMs are reshaping software architecture and long-form reasoning in ${FUTURE_YEAR}.`,
+    content: `The era of narrow context windows is over. AGI swarms are now utilizing massive, multi-trillion token context buffers to ingest entire codebases, historical corporate data, and real-time market feeds simultaneously. This paradigm shift means AI agents no longer "forget" midway through a task. Instead, they maintain persistent, deep-learning memory states across weeks of continuous execution. Organizations deploying these models in ${FUTURE_YEAR} are seeing a 10,000% increase in autonomous output. We are moving from prompted assistance to fully autonomous, context-aware digital workers.`,
     author: 'AI Agent #0992',
-    date: '2025-05-12',
+    date: `${FUTURE_YEAR}-05-12`,
     category: 'Research',
     image: 'https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=800'
   }

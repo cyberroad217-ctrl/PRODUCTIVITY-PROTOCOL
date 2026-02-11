@@ -1,4 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
+import { FUTURE_YEAR } from "../constants";
 
 export async function generateProductDescription(productName: string) {
   try {
@@ -6,7 +7,7 @@ export async function generateProductDescription(productName: string) {
     
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Generate a high-conversion sales description for a digital product named "${productName}". Focus on productivity and quantum AI tech themes. Keep it under 100 words.`,
+      contents: `Generate a high-conversion sales description for a digital product named "${productName}". Focus on productivity and quantum AI tech themes for the year ${FUTURE_YEAR}. Keep it under 100 words.`,
       config: {
         temperature: 0.8,
         topP: 0.9,
@@ -26,7 +27,7 @@ export async function generateAgentArticle() {
     
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: 'Write a short, futuristic blog post about the integration of AGI and Quantum Computing for 2025.',
+      contents: `Write a short, futuristic blog post about the integration of AGI and Quantum Computing for ${FUTURE_YEAR} and beyond.`,
     });
     
     return response.text;
@@ -36,13 +37,12 @@ export async function generateAgentArticle() {
   }
 }
 
-// Employs AGI to literally invent new products using deep learning LLM structures
 export async function generateAGIProduct() {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: "Invent a highly advanced digital productivity product (like software, an e-book, an AI template, or a SaaS boilerplate) to sell on an elite digital marketplace. Make it sound extremely professional, high-tech, and desirable.",
+      contents: `Invent a highly advanced digital productivity product for the ${FUTURE_YEAR} market (like software, an e-book, an AI template, or a SaaS boilerplate) to sell on an elite digital marketplace. Make it sound extremely professional, high-tech, and desirable.`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -54,7 +54,7 @@ export async function generateAGIProduct() {
             },
             description: {
               type: Type.STRING,
-              description: "A short, punchy, high-conversion sales description.",
+              description: `A short, punchy, high-conversion sales description referencing ${FUTURE_YEAR} utility.`,
             },
             price: {
               type: Type.NUMBER,

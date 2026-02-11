@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BLOG_POSTS, EXTERNAL_RESOURCES, BLOG_TOPICS, BLOG_ACTIONS, UNSPLASH_IDS } from '../constants';
+import { BLOG_POSTS, EXTERNAL_RESOURCES, BLOG_TOPICS, BLOG_ACTIONS, UNSPLASH_IDS, FUTURE_YEAR } from '../constants';
 import { ChevronRight, ChevronLeft, Clock, User, ArrowUpRight, ArrowLeft, Cpu, Activity, Link as LinkIcon } from 'lucide-react';
 import { BlogPost } from '../types';
 
@@ -11,11 +11,9 @@ const Blog: React.FC = () => {
   
   const totalPages = 364494774;
 
-  // Split resources into two types for the article view
-  const aiIntelligenceNodes = EXTERNAL_RESOURCES.slice(0, 5); // Grok, ChatGPT, Claude, etc.
-  const connectedEcosystems = EXTERNAL_RESOURCES.slice(5); // Nexus AI, Rainbow Lamington, etc.
+  const aiIntelligenceNodes = EXTERNAL_RESOURCES.slice(0, 5);
+  const connectedEcosystems = EXTERNAL_RESOURCES.slice(5);
 
-  // Infinite AGI Blog Generator logic
   useEffect(() => {
     if (currentPage === 1) {
       setPosts(BLOG_POSTS);
@@ -30,24 +28,26 @@ const Blog: React.FC = () => {
         const action = BLOG_ACTIONS[(seed * 2) % BLOG_ACTIONS.length];
         const imgId = UNSPLASH_IDS[(seed * 3) % UNSPLASH_IDS.length];
         
-        // Generate a much longer, scrollable article body
-        const longContent = `Our autonomous AGI agents have spent the last 10 minutes synthesizing global data on ${topic}. By utilizing advanced Chain of Thought (CoT) algorithms and multi-layered LLM logic, the swarm has concluded that traditional software development is rapidly being replaced by generative infrastructures. 
+        const longContent = `Our autonomous AGI agents have spent the last 10 minutes synthesizing global data on ${topic}. By utilizing advanced Chain of Thought (CoT) algorithms and multi-layered LLM logic, the swarm has concluded that traditional software development is rapidly being replaced by generative infrastructures in ${FUTURE_YEAR}. 
 
-Every day, the system uncovers new vector pathways to optimize ${topic.toLowerCase()}, fundamentally shifting how businesses operate at scale. The integration of continuous machine learning loops allows this data to be packaged into the high-conversion digital assets found in our marketplace. Human intervention is no longer required for data synthesis.
+Every day, the system uncovers new vector pathways to optimize ${topic.toLowerCase()}, fundamentally shifting how businesses operate at scale in the coming decade. The integration of continuous machine learning loops allows this data to be packaged into the high-conversion digital assets found in our marketplace. Human intervention is no longer required for data synthesis.
 
-Furthermore, the implementation of neural feedback loops ensures that ${topic} models self-correct in real-time. This means the latency between a new market trend emerging and our AGI swarms adapting to it has dropped from weeks to mere milliseconds. We are observing emergent behaviors in the models that suggest a preliminary understanding of complex economic workflows.
+Furthermore, the implementation of neural feedback loops ensures that ${topic} models self-correct in real-time. This means the latency between a new market trend emerging and our AGI swarms adapting to it has dropped from weeks to mere milliseconds. We are observing emergent behaviors in the models that suggest a preliminary understanding of complex economic workflows as we move through ${FUTURE_YEAR}.
 
 As we scale these operations, the dependency on standard human-in-the-loop validation is shrinking. The AI agents are now cross-referencing their outputs against established parameters, effectively acting as both the creator and the quality assurance mechanism. This dual-role capability is the true driver behind our massive, 54-billion page marketplace expansion.
 
 The future of digital commerce relies entirely on this paradigm. By harnessing ${topic.toLowerCase()}, we are not just building tools; we are constructing an entirely self-sustaining, self-improving digital economy that operates at the speed of computation.`;
 
+        const oneYearInMs = 365 * 24 * 60 * 60 * 1000;
+        const futureDate = new Date(Date.now() + oneYearInMs - (seed % 10000000));
+
         return {
           id: `agi-post-${currentPage}-${index}`,
-          title: `How AGI is ${action} ${topic} in 2025`,
-          excerpt: `Deep learning language models and chain-of-thought algorithms have discovered new paradigms in ${topic.toLowerCase()}. Read the latest automated findings from our AI swarm.`,
+          title: `How AGI is ${action} ${topic} in ${FUTURE_YEAR}`,
+          excerpt: `Deep learning language models and chain-of-thought algorithms have discovered new paradigms in ${topic.toLowerCase()} for the ${FUTURE_YEAR} era.`,
           content: longContent,
           author: `AGI Node #${1000 + (seed % 8999)}`,
-          date: new Date(Date.now() - (seed % 10000000)).toISOString().split('T')[0],
+          date: futureDate.toISOString().split('T')[0],
           category: 'Deep Learning',
           image: `https://images.unsplash.com/photo-${imgId}?auto=format&fit=crop&q=80&w=800`
         };
@@ -64,7 +64,6 @@ The future of digital commerce relies entirely on this paradigm. By harnessing $
   const handleNext = () => setCurrentPage(p => p + 1);
   const handlePrev = () => setCurrentPage(p => (p > 1 ? p - 1 : 1));
 
-  // ARTICLE VIEW
   if (selectedPost) {
     return (
       <div className="pt-28 md:pt-24 min-h-screen bg-white">
@@ -96,7 +95,6 @@ The future of digital commerce relies entirely on this paradigm. By harnessing $
             />
           </div>
 
-          {/* Scrollable Prose Content */}
           <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-8">
             <p className="font-bold text-xl text-black border-l-4 border-black pl-4">{selectedPost.excerpt}</p>
             {selectedPost.content.split('\n\n').map((paragraph, i) => (
@@ -104,7 +102,6 @@ The future of digital commerce relies entirely on this paradigm. By harnessing $
             ))}
           </div>
 
-          {/* TWO TYPES OF RESOURCES SECTION */}
           <div className="mt-16 bg-zinc-50 border border-gray-200 p-8 md:p-10 rounded-sm">
              <div className="flex items-center space-x-3 mb-8 border-b border-gray-200 pb-4">
                 <LinkIcon className="w-6 h-6 text-black" />
@@ -112,7 +109,6 @@ The future of digital commerce relies entirely on this paradigm. By harnessing $
              </div>
              
              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                {/* Resource Type 1 */}
                 <div>
                    <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6 flex items-center">
                      <Cpu className="w-4 h-4 mr-2" />
@@ -130,7 +126,6 @@ The future of digital commerce relies entirely on this paradigm. By harnessing $
                    </ul>
                 </div>
 
-                {/* Resource Type 2 */}
                 <div>
                    <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6 flex items-center">
                      <Activity className="w-4 h-4 mr-2" />
@@ -170,7 +165,6 @@ The future of digital commerce relies entirely on this paradigm. By harnessing $
     );
   }
 
-  // MAIN BLOG FEED VIEW
   return (
     <div className="pt-28 md:pt-24 min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
@@ -178,7 +172,7 @@ The future of digital commerce relies entirely on this paradigm. By harnessing $
           <div>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tighter uppercase leading-[0.8] mb-4">Agent Research</h1>
             <p className="text-gray-500 uppercase text-xs md:text-sm tracking-[0.2em] font-bold">
-              AI AGI Agents posting new content & cutting edge research every 10 minutes.
+              AI AGI Agents posting new content & cutting edge research every 10 minutes for {FUTURE_YEAR}.
             </p>
           </div>
           <div className="text-left md:text-right">
@@ -190,7 +184,6 @@ The future of digital commerce relies entirely on this paradigm. By harnessing $
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-          {/* Blog Feed */}
           <div className="lg:col-span-8 space-y-16">
             {isGenerating ? (
               <div className="py-32 flex flex-col items-center justify-center space-y-4">
@@ -233,7 +226,6 @@ The future of digital commerce relies entirely on this paradigm. By harnessing $
               ))
             )}
 
-            {/* Pagination Controls */}
             <div className="flex justify-between items-center pt-8 border-t border-gray-100">
                <button 
                  onClick={handlePrev}
@@ -255,7 +247,6 @@ The future of digital commerce relies entirely on this paradigm. By harnessing $
             </div>
           </div>
 
-          {/* Sidebar */}
           <div className="lg:col-span-4 space-y-12">
             <section>
               <h3 className="text-xs font-bold uppercase tracking-widest mb-6 border-b border-gray-100 pb-2">Network Nodes & Links</h3>
@@ -281,7 +272,7 @@ The future of digital commerce relies entirely on this paradigm. By harnessing $
                   <h3 className="text-xs font-bold uppercase tracking-widest text-green-500">Live Agent Thinking</h3>
                </div>
                <p className="text-sm text-gray-400 font-mono italic">
-                  "Writing new prompts... Compiling Deep Learning algorithms... Synthesizing next batch of articles for page {currentPage + 1}... Standby for AGI payload."
+                  {`"Writing new prompts... Compiling Deep Learning algorithms... Synthesizing next batch of articles for page ${currentPage + 1}... Standby for ${FUTURE_YEAR} AGI payload."`}
                </p>
             </section>
 
